@@ -1,0 +1,26 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 as buils-env
+WORKDIR /app
+
+#copy csproj and restore as distinct layer
+COPY *.sln .
+COPY OrderService/*.csproj ./OrderService/
+COPY Common/*.csproj ./Common/
+
+#restote packages
+RUN dotnet restore
+
+#copy everything else and build
+COPY OrderService/. ./OrderService/
+COPY Common/. ./Common/
+
+#Change work directory to build Order Service
+WORKDIR /app/OrderService
+RUN dotnet build
+RUN dotnet publish -c Release -o out
+
+# build runtime image
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1 as runtime
+WORKDIR /app
+#publised files of Orderservice present in /App/OrderService/out filder
+COPY --from=buils-env /app/OrderService/out ./
+ENTRYPOINT ["dotnet","OrderService.dll"]

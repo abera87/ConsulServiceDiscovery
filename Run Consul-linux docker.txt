@@ -1,0 +1,27 @@
+#run consul 
+docker run -d -p 8500:8500 -p 8600:8600/udp --name=badger consul agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+
+
+# build sample web api image
+docker build -t order-service-test .
+
+#build layered project solution from .sln location
+docker build -t order-service-test-img -f OrderService/Dockerfile .
+
+# run docker image in container webapi
+docker run -d -p 5000:80 --name order-service-api order-service-test
+
+# run docker image in container webapi
+docker run -d -p 5000:80 --name order-service-api --hostname orderserviceapi01 order-service-test-img
+
+docker run -d -p 5001:80 --name order-service-api1 --hostname orderserviceapi01 order-service-test-img
+docker run -d -p 5002:80 --name order-service-api2 --hostname orderserviceapi02 order-service-test-img
+docker run -d -p 5003:80 --name order-service-api3 --hostname orderserviceapi03 order-service-test-img
+docker run -d -p 5004:80 --name order-service-api4 --hostname orderserviceapi04 order-service-test-img
+
+
+# build API Gateway
+docker build -t apigateway-img .
+
+# container for API gateway
+docker run  -p 5000:80 --name apigateway --hostname apigateway01 apigateway-img

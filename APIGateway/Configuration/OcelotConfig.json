@@ -1,0 +1,27 @@
+{
+    "Routes": [
+        {
+            "DownstreamPathTemplate": "/OrderService/{everything}",
+            "DownstreamScheme":"http",
+            "UpstreamPathTemplate":"/OrderServiceAPI/{everything}",
+            "UpstreamHttpMethod":[
+                "POST",
+                "PUT",
+                "GET"
+            ],
+            "ServiceName":"OrderService",
+            "UseServiceDiscovery":true,
+            "LoadBalancerOptions":{
+                "type":"RoundRobin"
+            },
+            "ReRouteCaseSensitive":false
+        }
+    ],
+    "GlobalConfiguration":{
+        "ServiceDiscoveryProvider":{
+            "Host":"172.17.0.2",
+            "Port":8500,
+            "Type":"Consul"
+        }
+    }
+}
