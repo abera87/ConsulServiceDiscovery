@@ -14,8 +14,14 @@ namespace Common.Extension
 {
     public static class AppExtensions
     {
-        public static IServiceCollection AddConsulConfiguration(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddConsulConfiguration(this IServiceCollection services)
         {
+            IConfiguration configuration;
+            using (var serviceProvider = services.BuildServiceProvider())
+            {
+                configuration = serviceProvider.GetService<IConfiguration>();
+            }
+
             var consulHostURL = configuration.GetSection("Consul").GetSection("HostURL").Value;
             var consulDockerHostURL = configuration.GetSection("Consul").GetSection("DockerHostURL").Value;
             var hostInDocker = configuration.GetSection("HostInDocker").Value;
@@ -32,8 +38,9 @@ namespace Common.Extension
             return services;
         }
 
-        public static IApplicationBuilder UseConsul(this IApplicationBuilder app, IConfiguration configuration)
+        public static IApplicationBuilder UseConsul(this IApplicationBuilder app)
         {
+            var configuration = app.ApplicationServices.GetRequiredService<IConfiguration>();
             var serviceName = configuration.GetSection("ServiceName").Value;
 
             var consulClient = app.ApplicationServices.GetRequiredService<IConsulClient>();

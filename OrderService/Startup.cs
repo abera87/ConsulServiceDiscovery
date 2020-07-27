@@ -32,7 +32,7 @@ namespace OrderService
 
             services.AddSingleton<IHttpContextAccessor,HttpContextAccessor>();
 
-            services.AddConsulConfiguration(Configuration);
+            services.AddConsulConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -49,7 +49,7 @@ namespace OrderService
 
             app.UseAuthorization();
 
-            app.UseConsul(Configuration);
+            app.UseConsul();
 
             app.UseEndpoints(endpoints =>
             {
