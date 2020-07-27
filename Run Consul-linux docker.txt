@@ -25,3 +25,13 @@ docker build -t apigateway-img .
 
 # container for API gateway
 docker run  -p 5000:80 --name apigateway --hostname apigateway01 apigateway-img
+
+# create docker service with replicas
+docker service create --name orderserviceapiservice --replicas 3 order-service-test-img dotnet OrderService.dll
+
+# scale service
+docker service update --replicas 5 orderserviceapiservice 
+
+# scale service to zero (0) to stop all underlaying container
+docker service update --replicas 0 orderserviceapiservice 
+
